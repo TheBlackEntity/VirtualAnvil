@@ -15,12 +15,18 @@ public abstract class VirtualAnvil {
     protected static Method initMenuMethod = null;
     protected static Method getBukkitViewMethod = null;
     protected static Field containerField = null;
-    private static String version = null;
+    private static String version = "v1_18_R1";
 
     private static me.entity303.virtualanvil.virtual.anvil.VirtualAnvil virtualAnvil = null;
 
     public static void load() {
-        getVersion();
+        String version;
+        try {
+            version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+            version = "v1_18_R1";
+        }
         if (version.contains("1_8") || version.contains("1_9") || version.contains("1_10") || version.contains("1_11") || version.contains("1_12") || version.contains("1_13"))
             virtualAnvil = new VirtualAnvil_v1_8_R3_To_v1_13_R2();
         else try {
@@ -29,20 +35,15 @@ public abstract class VirtualAnvil {
         } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
             virtualAnvil = new VirtualAnvil_v1_14_R1_To_v1_16_R3();
         }
+        VirtualAnvil.version = version;
+    }
+
+    public static String getVersion() {
+        return version;
     }
 
     public static me.entity303.virtualanvil.virtual.anvil.VirtualAnvil getVirtualAnvil() {
         return virtualAnvil;
-    }
-
-    protected static String getVersion() {
-        if (version == null) try {
-            version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return version;
     }
 
     public static ContainerAccessWrapper getWrapper(Player player) {
